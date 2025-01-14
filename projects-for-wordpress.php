@@ -30,7 +30,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Current plugin version.
  */
-define( 'PROJECTS_FOR_WORDPRESS_VERSION', '1.0.0' );
+define( 'PROJECTS_FOR_WORDPRESS_VERSION', time() );
 
 require 'includes/plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
@@ -58,7 +58,7 @@ register_activation_hook( __FILE__, 'projects_wp_flush_rewrite_rules' );
  * Register Custom Post Type and Taxonomy
  */
 function projects_wp_register_cpt_and_taxonomy() {
-    register_post_type( 'project', [
+    register_post_type( 'projects', [
         'labels'        => [
             'name'          => __( 'Projects', 'projects-wp' ),
             'singular_name' => __( 'Project', 'projects-wp' ),
@@ -66,12 +66,13 @@ function projects_wp_register_cpt_and_taxonomy() {
         ],
         'public'        => true,
         'has_archive'   => true,
-        'supports'      => [ 'title', 'editor', 'thumbnail' ],
-        'rewrite'       => [ 'slug' => 'project' ],
+        'supports'      => [ 'title', 'editor', 'thumbnail', 'excerpt' ],
+        'rewrite'       => [ 'slug' => 'projects' ],
         'show_in_rest'  => true,
-    ]);
+        'menu_icon'     => 'dashicons-format-gallery'
+    ] );
 
-    register_taxonomy( 'project_type', 'project', [
+    register_taxonomy( 'project-type', 'projects', [
         'labels'            => [
             'name'          => __( 'Project Types', 'projects-wp' ),
             'singular_name' => __( 'Project Type', 'projects-wp' ),
@@ -79,7 +80,11 @@ function projects_wp_register_cpt_and_taxonomy() {
         'hierarchical'      => true,
         'show_in_rest'      => true,
         'show_admin_column' => true,
-    ]);
+        'rewrite'           => [
+            'slug'         => 'project-type',
+            'with_front'   => false,
+        ],
+    ] );
 
     if ( ! term_exists( 'plugin', 'project_type' ) ) {
         wp_insert_term( __( 'Plugin', 'projects-wp' ), 'project_type' );
@@ -119,7 +124,7 @@ function projects_wp_add_meta_boxes() {
         'projects_wp_github_url',
         __( 'GitHub Repository URL', 'projects-wp' ),
         'projects_wp_render_meta_box',
-        'project',
+        'projects',
         'side'
     );
 }
@@ -147,6 +152,9 @@ add_action( 'save_post', 'projects_wp_save_meta_box' );
 
 /**
  * Fetch GitHub latest release URL.
+ * 
+ * @since  1.0.0
+ * @return mixed
  */
 function projects_wp_get_github_release_url( $github_url ) {
     $api_token = get_option( 'projects_wp_github_api_token', '' );
@@ -167,9 +175,57 @@ function projects_wp_get_github_release_url( $github_url ) {
     return $data['zipball_url'] ?? false;
 }
 
-/**
- * Handle download redirect.
- */
+function projects_wp_get_github_data( $github_url ) {
+    if ( empty( $github_url ) ) {
+        error_log( 'GitHub URL is empty.' );
+        return null;
+    }
+
+    $api_url = str_replace( 'https://github.com/', 'https://api.github.com/repos/', rtrim( $github_url, '/' ) );
+    $api_token = get_option( 'projects_wp_github_api_token', '' );
+
+    $headers = [ 'Accept' => 'application/vnd.github.v3+json' ];
+    if ( ! empty( $api_token ) ) {
+        $headers['Authorization'] = 'token ' . $api_token;
+    } else {
+        error_log( 'GitHub API token is missing. Using unauthenticated requests.' );
+    }
+
+    $cache_key = 'projects_wp_github_data_' . md5( $api_url );
+    $cached_data = get_transient( $cache_key );
+    if ( $cached_data ) {
+        return $cached_data;
+    }
+
+    $response = wp_remote_get( $api_url, [ 'headers' => $headers ] );
+
+    if ( is_wp_error( $response ) ) {
+        error_log( 'GitHub API error: ' . $response->get_error_message() );
+        return null;
+    }
+
+    $response_code = wp_remote_retrieve_response_code( $response );
+    if ( $response_code === 403 ) {
+        $rate_limit_remaining = wp_remote_retrieve_header( $response, 'x-ratelimit-remaining' );
+        $rate_limit_reset = wp_remote_retrieve_header( $response, 'x-ratelimit-reset' );
+        error_log( 'GitHub API 403: Rate limit exceeded. Remaining: ' . $rate_limit_remaining . ' Reset at: ' . date( 'Y-m-d H:i:s', $rate_limit_reset ) );
+        return null;
+    } elseif ( $response_code !== 200 ) {
+        error_log( 'GitHub API error: Received status ' . $response_code );
+        return null;
+    }
+
+    $data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+    if ( empty( $data ) || ! is_array( $data ) ) {
+        error_log( 'GitHub API error: Invalid data received.' );
+        return null;
+    }
+
+    set_transient( $cache_key, $data, HOUR_IN_SECONDS );
+    return $data;
+}
+
 /**
  * Handle Download Redirect and Increment Download Count
  */
@@ -177,7 +233,7 @@ function projects_wp_handle_download_redirect() {
     $project_id = get_query_var( 'project_download_id' );
 
     if ( $project_id ) {
-        $github_url = get_post_meta( $project_id, '_projects_wp_github_url', true );
+        $github_url   = get_post_meta( $project_id, '_projects_wp_github_url', true );
         $download_url = projects_wp_get_github_release_url( $github_url );
 
         if ( $download_url ) {
@@ -205,7 +261,7 @@ add_action( 'template_redirect', 'projects_wp_handle_download_redirect' );
  */
 function projects_wp_add_settings_page() {
     add_submenu_page(
-        'edit.php?post_type=project',
+        'edit.php?post_type=projects',
         __( 'Settings', 'projects-wp' ),
         __( 'Settings', 'projects-wp' ),
         'manage_options',
@@ -215,13 +271,18 @@ function projects_wp_add_settings_page() {
 }
 add_action( 'admin_menu', 'projects_wp_add_settings_page' );
 
+/**
+ * Render the settings page.
+ */
 function projects_wp_render_settings_page() {
-    if ( isset( $_POST['projects_wp_save_settings'] ) && check_admin_referer( 'projects_wp_save_settings' ) ) {
-        $api_token = sanitize_text_field( $_POST['projects_wp_github_api_token'] );
-        update_option( 'projects_wp_github_api_token', $api_token );
-        echo '<div class="updated"><p>' . __( 'Settings saved.', 'projects-wp' ) . '</p></div>';
+    if ( isset( $_POST['projects_wp_save_settings'] ) ) {
+        projects_wp_save_settings(); // Save settings
     }
-    $api_token = get_option( 'projects_wp_github_api_token', '' );
+
+    // Retrieve saved settings
+    $api_token       = get_option( 'projects_wp_github_api_token', '' );
+    $share_telemetry = get_option( 'projects_wp_share_telemetry', '0' );
+
     ?>
     <div class="wrap">
         <h1><?php esc_html_e( 'Projects for WordPress Settings', 'projects-wp' ); ?></h1>
@@ -236,11 +297,44 @@ function projects_wp_render_settings_page() {
                         <input type="password" id="projects_wp_github_api_token" name="projects_wp_github_api_token" value="<?php echo esc_attr( $api_token ); ?>" class="regular-text" />
                     </td>
                 </tr>
+                <tr>
+                    <th scope="row">
+                        <label for="projects_wp_share_telemetry"><?php esc_html_e( 'Share Telemetry Data', 'projects-wp' ); ?></label>
+                    </th>
+                    <td>
+                        <input type="checkbox" id="projects_wp_share_telemetry" name="projects_wp_share_telemetry" value="1" <?php checked( $share_telemetry, '1' ); ?> />
+                        <p class="description"><?php esc_html_e( 'Allow sharing telemetry data about your projects to help improve the plugin.', 'projects-wp' ); ?></p>
+                    </td>
+                </tr>
             </table>
             <?php submit_button( __( 'Save Settings', 'projects-wp' ) ); ?>
         </form>
     </div>
     <?php
+}
+
+/**
+ * Save the settings from the settings page.
+ */
+function projects_wp_save_settings() {
+    if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'projects_wp_save_settings' ) ) {
+        return;
+    }
+
+    // Save GitHub API token
+    if ( isset( $_POST['projects_wp_github_api_token'] ) ) {
+        $api_token = sanitize_text_field( $_POST['projects_wp_github_api_token'] );
+        update_option( 'projects_wp_github_api_token', $api_token );
+    }
+
+    // Save telemetry sharing preference
+    $share_telemetry = isset( $_POST['projects_wp_share_telemetry'] ) ? '1' : '0';
+    update_option( 'projects_wp_share_telemetry', $share_telemetry );
+
+    // Add a success notice
+    add_action( 'admin_notices', function() {
+        echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Settings saved.', 'projects-wp' ) . '</p></div>';
+    } );
 }
 
 /**
@@ -288,42 +382,105 @@ function projects_wp_sort_download_count_column( $query ) {
 add_action( 'pre_get_posts', 'projects_wp_sort_download_count_column' );
 
 /**
- * Add custom fields to REST API responses for projects.
+ * Register custom REST API endpoint for projects.
  */
-function projects_wp_add_rest_fields() {
-    register_rest_field( 
-        'project', 
-        'download_count', 
+function projects_wp_register_custom_endpoint() {
+    register_rest_route(
+        'projects/v1', // Namespace and version
+        '/projects', // Endpoint
         [
-            'get_callback'    => function( $post ) {
-                return (int) get_post_meta( $post['id'], '_projects_wp_download_count', true );
-            },
-            'update_callback' => null,
-            'schema'          => [
-                'description' => __( 'Download count of the project.', 'projects-wp' ),
-                'type'        => 'integer',
-                'context'     => [ 'view', 'edit' ],
-            ],
-        ]
-    );
-
-    register_rest_field( 
-        'project', 
-        'github_url', 
-        [
-            'get_callback'    => function( $post ) {
-                return get_post_meta( $post['id'], '_projects_wp_github_url', true );
-            },
-            'update_callback' => null,
-            'schema'          => [
-                'description' => __( 'GitHub repository URL of the project.', 'projects-wp' ),
-                'type'        => 'string',
-                'context'     => [ 'view', 'edit' ],
-            ],
+            'methods'  => WP_REST_Server::READABLE,
+            'callback' => 'projects_wp_get_projects_data',
+            'permission_callback' => '__return_true',
         ]
     );
 }
-add_action( 'rest_api_init', 'projects_wp_add_rest_fields' );
+add_action( 'rest_api_init', 'projects_wp_register_custom_endpoint' );
+
+/**
+ * Callback function for the custom projects endpoint.
+ *
+ * @param WP_REST_Request $request The REST API request object.
+ * @return WP_REST_Response
+ */
+function projects_wp_get_projects_data( $request ) {
+    $args = [
+        'post_type'      => 'projects',
+        'posts_per_page' => $request->get_param( 'per_page' ) ?? 10,
+        'paged'          => $request->get_param( 'page' ) ?? 1,
+    ];
+
+    $query = new WP_Query( $args );
+    $projects = [];
+
+    if ( $query->have_posts() ) {
+        while ( $query->have_posts() ) {
+            $query->the_post();
+
+            $project_id = get_the_ID();
+            $github_url = get_post_meta( $project_id, '_projects_wp_github_url', true );
+            $github_data = projects_wp_get_github_data( $github_url );
+
+            $projects[] = [
+                'id'             => $project_id,
+                'title'          => get_the_title(),
+                'excerpt'        => get_the_excerpt(),
+                'permalink'      => get_permalink(),
+                'thumbnail'      => get_the_post_thumbnail_url( $project_id, 'large' ),
+                'download_count' => (int) get_post_meta( $project_id, '_projects_wp_download_count', true ),
+                'github_url'     => $github_url,
+                'github_data'    => [
+                    'owner'        => [
+                        'avatar_url' => $github_data['owner']['avatar_url'] ?? '',
+                        'name'       => $github_data['owner']['login'] ?? '',
+                        'profile'    => $github_data['owner']['html_url'] ?? '',
+                    ],
+                    'last_updated' => ! empty( $github_data['updated_at'] )
+                        ? date_i18n( get_option( 'date_format' ), strtotime( $github_data['updated_at'] ) )
+                        : '',
+                    'language'     => $github_data['language'] ?? '',
+                    'license'      => $github_data['license']['name'] ?? 'None',
+                    'stars'        => $github_data['stargazers_count'] ?? 0,
+                    'forks'        => $github_data['forks_count'] ?? 0,
+                    'issues'       => $github_data['open_issues_count'] ?? 0,
+                ],
+                'version'        => projects_wp_get_version_from_github( $github_url ),
+            ];
+        }
+        wp_reset_postdata();
+    }
+
+    $response = [
+        'projects' => $projects,
+        'total'    => $query->found_posts,
+        'pages'    => $query->max_num_pages,
+    ];
+
+    return rest_ensure_response( $response );
+}
+
+/**
+ * Fetch the version number from the GitHub API.
+ *
+ * @param string $github_url The GitHub repository URL.
+ * @return string The version number or 'Unknown'.
+ */
+function projects_wp_get_version_from_github( $github_url ) {
+    if ( empty( $github_url ) ) {
+        return 'Unknown';
+    }
+
+    $api_url  = str_replace( 'https://github.com/', 'https://api.github.com/repos/', rtrim( $github_url, '/' ) ) . '/releases/latest';
+    $response = wp_remote_get( $api_url );
+
+    if ( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) !== 200 ) {
+        return 'Unknown';
+    }
+
+    $data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+    return $data['tag_name'] ?? 'Unknown';
+}
 
 /**
  * Register REST API endpoint for popular projects.
@@ -345,7 +502,7 @@ function projects_wp_register_popular_endpoint() {
  */
 function projects_wp_get_popular_projects( $data ) {
     $args = [
-        'post_type'      => 'project',
+        'post_type'      => 'projects',
         'posts_per_page' => $data->get_param( 'per_page' ) ?? 10,
         'meta_key'       => '_projects_wp_download_count',
         'orderby'        => 'meta_value_num',
@@ -377,16 +534,22 @@ add_action( 'rest_api_init', 'projects_wp_register_popular_endpoint' );
  * Load custom templates for single and archive project views.
  */
 function projects_wp_template_loader( $template ) {
-    if ( is_singular( 'project' ) ) {
-        // Check for a single-project.php template in the theme
-        $theme_template = locate_template( 'single-project.php' );
-        return $theme_template ? $theme_template : plugin_dir_path( __FILE__ ) . 'templates/single-project.php';
+    if ( is_singular( 'projects' ) ) {
+        // Check for a single-projects.php template in the theme
+        $theme_template = locate_template( 'single-projects.php' );
+        return $theme_template ? $theme_template : plugin_dir_path( __FILE__ ) . 'templates/single-projects.php';
     }
 
-    if ( is_post_type_archive( 'project' ) ) {
-        // Check for an archive-project.php template in the theme
-        $theme_template = locate_template( 'archive-project.php' );
-        return $theme_template ? $theme_template : plugin_dir_path( __FILE__ ) . 'templates/archive-project.php';
+    if ( is_post_type_archive( 'projects' ) ) {
+        // Check for an archive-projects.php template in the theme
+        $theme_template = locate_template( 'archive-projects.php' );
+        return $theme_template ? $theme_template : plugin_dir_path( __FILE__ ) . 'templates/archive-projects.php';
+    }
+
+    if ( is_tax( 'project-type' ) ) {
+        // Check for a taxonomy-project-type.php template in the theme
+        $theme_template = locate_template( 'archive-project-type.php' );
+        return $theme_template ? $theme_template : plugin_dir_path( __FILE__ ) . 'templates/taxonomy-project-type.php';
     }
 
     return $template;
@@ -394,23 +557,29 @@ function projects_wp_template_loader( $template ) {
 add_filter( 'template_include', 'projects_wp_template_loader' );
 
 /**
- * Enqueue styles for the plugin.
+ * Enqueue styles for project single and archive templates.
+ * 
+ * @since  1.0.0
+ * @return void
  */
-function projects_wp_enqueue_styles() {
-    wp_enqueue_style(
-        'projects-wp',
-        plugin_dir_url( __FILE__ ) . 'assets/css/style.css',
-        [],
-        PROJECTS_FOR_WORDPRESS_VERSION
-    );
+function projects_wp_enqueue_project_styles() {
+    if ( is_singular( 'projects' ) || is_post_type_archive( 'projects' ) ) {
+        wp_enqueue_style(
+            'projects-wp-styles',
+            plugin_dir_url( __FILE__ ) . 'assets/css/style.css',
+            [],
+            PROJECTS_FOR_WORDPRESS_VERSION
+        );
+    }
 }
-add_action( 'wp_enqueue_scripts', 'projects_wp_enqueue_styles' );
+add_action( 'wp_enqueue_scripts', 'projects_wp_enqueue_project_styles' );
 
 /**
  * Add social sharing buttons with Tabler icons.
  *
  * @param string $content The post content.
- * @return string Modified post content.
+ * 
+ * @return void
  */
 function projects_wp_social_sharing_buttons( $project_id ) {
     $url   = urlencode( get_permalink( $project_id ) );
