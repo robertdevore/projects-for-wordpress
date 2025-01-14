@@ -275,19 +275,20 @@ add_action( 'admin_menu', 'projects_wp_add_settings_page' );
  * Render the settings page.
  */
 function projects_wp_render_settings_page() {
+    // Handle settings save
     if ( isset( $_POST['projects_wp_save_settings'] ) ) {
-        projects_wp_save_settings(); // Save settings
+        projects_wp_save_settings();
     }
 
     // Retrieve saved settings
     $api_token       = get_option( 'projects_wp_github_api_token', '' );
-    $share_telemetry = get_option( 'projects_wp_share_telemetry', '0' );
+    $share_telemetry = get_option( 'projects_wp_share_telemetry', '0' ); // Default to '0'
 
     ?>
     <div class="wrap">
         <h1><?php esc_html_e( 'Projects for WordPress Settings', 'projects-wp' ); ?></h1>
         <form method="post">
-            <?php wp_nonce_field( 'projects_wp_save_settings' ); ?>
+            <?php wp_nonce_field( 'projects_wp_save_settings', 'projects_wp_settings_nonce' ); ?>
             <table class="form-table">
                 <tr>
                     <th scope="row">
@@ -307,6 +308,7 @@ function projects_wp_render_settings_page() {
                     </td>
                 </tr>
             </table>
+            <input type="hidden" name="projects_wp_save_settings" value="1" />
             <?php submit_button( __( 'Save Settings', 'projects-wp' ) ); ?>
         </form>
     </div>
@@ -317,7 +319,8 @@ function projects_wp_render_settings_page() {
  * Save the settings from the settings page.
  */
 function projects_wp_save_settings() {
-    if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], 'projects_wp_save_settings' ) ) {
+    // Verify the nonce
+    if ( ! isset( $_POST['projects_wp_settings_nonce'] ) || ! wp_verify_nonce( $_POST['projects_wp_settings_nonce'], 'projects_wp_save_settings' ) ) {
         return;
     }
 
@@ -331,10 +334,12 @@ function projects_wp_save_settings() {
     $share_telemetry = isset( $_POST['projects_wp_share_telemetry'] ) ? '1' : '0';
     update_option( 'projects_wp_share_telemetry', $share_telemetry );
 
-    // Add a success notice
-    add_action( 'admin_notices', function() {
-        echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Settings saved.', 'projects-wp' ) . '</p></div>';
-    } );
+    // Set a transient for the success message
+    set_transient( 'projects_wp_settings_saved', true, 30 );
+
+    // Redirect back to the settings page
+    wp_redirect( add_query_arg( 'page', 'projects-wp-settings', admin_url( 'edit.php?post_type=projects' ) ) );
+    exit;
 }
 
 /**
@@ -421,6 +426,11 @@ function projects_wp_get_projects_data( $request ) {
             $github_url = get_post_meta( $project_id, '_projects_wp_github_url', true );
             $github_data = projects_wp_get_github_data( $github_url );
 
+            // Fetch project-type taxonomy terms (names)
+            $project_types = wp_get_post_terms( $project_id, 'project-type', [
+                'fields' => 'names',
+            ] );
+
             $projects[] = [
                 'id'             => $project_id,
                 'title'          => get_the_title(),
@@ -445,6 +455,8 @@ function projects_wp_get_projects_data( $request ) {
                     'issues'       => $github_data['open_issues_count'] ?? 0,
                 ],
                 'version'        => projects_wp_get_version_from_github( $github_url ),
+                'project_types'  => $project_types,
+                'content'        => get_the_content(),
             ];
         }
         wp_reset_postdata();
@@ -625,3 +637,107 @@ function projects_wp_social_sharing_buttons( $project_id ) {
     echo '</div>';
 }
 add_action( 'projects_after_download_button', 'projects_wp_social_sharing_buttons', 999 );
+
+/**
+ * Schedule a daily cron job to send telemetry data.
+ */
+function projects_wp_schedule_telemetry_cron() {
+    if ( ! wp_next_scheduled( 'projects_wp_send_telemetry_cron' ) ) {
+        wp_schedule_event( time(), 'daily', 'projects_wp_send_telemetry_cron' );
+    }
+}
+add_action( 'wp', 'projects_wp_schedule_telemetry_cron' );
+
+/**
+ * Clear the scheduled cron job on plugin deactivation.
+ */
+function projects_wp_clear_telemetry_cron() {
+    $timestamp = wp_next_scheduled( 'projects_wp_send_telemetry_cron' );
+    if ( $timestamp ) {
+        wp_unschedule_event( $timestamp, 'projects_wp_send_telemetry_cron' );
+    }
+}
+register_deactivation_hook( __FILE__, 'projects_wp_clear_telemetry_cron' );
+
+/**
+ * Send telemetry data to a third-party API.
+ */
+function projects_wp_send_telemetry_data() {
+    // Check if telemetry sharing is enabled
+    $share_telemetry = get_option( 'projects_wp_share_telemetry', '0' );
+    if ( '1' !== $share_telemetry ) {
+        return;
+    }
+
+    // Retrieve data from the custom REST API endpoint
+    $api_url = rest_url( 'projects/v1/projects' );
+    $response = wp_remote_get( $api_url, [
+        'timeout' => 15,
+        'headers' => [
+            'Accept' => 'application/json',
+        ],
+    ] );
+
+    if ( is_wp_error( $response ) ) {
+        error_log( 'Failed to fetch telemetry data: ' . $response->get_error_message() );
+        return;
+    }
+
+    $status_code = wp_remote_retrieve_response_code( $response );
+    if ( 200 !== $status_code ) {
+        error_log( 'Unexpected response code while fetching telemetry data: ' . $status_code );
+        return;
+    }
+
+    $data = json_decode( wp_remote_retrieve_body( $response ), true );
+    if ( empty( $data['projects'] ) || ! is_array( $data['projects'] ) ) {
+        error_log( 'Invalid telemetry data received.' );
+        return;
+    }
+
+    // Prepare the payload for the third-party API
+    $third_party_api_url = 'http://127.0.0.1:5000/api/telemetry';
+    $payload = [
+        'site_url' => home_url(),
+        'data'     => $data['projects'],
+    ];
+
+    // Send the data to the third-party API
+    $response = wp_remote_post( $third_party_api_url, [
+        'timeout' => 15,
+        'headers' => [
+            'Content-Type' => 'application/json',
+        ],
+        'body' => wp_json_encode( $payload ),
+    ] );
+
+    if ( is_wp_error( $response ) ) {
+        error_log( 'Failed to send telemetry data: ' . $response->get_error_message() );
+    } else {
+        $status_code = wp_remote_retrieve_response_code( $response );
+        if ( in_array( $status_code, [ 200, 201 ], true ) ) {
+            error_log( 'Telemetry data sent successfully.' );
+        } else {
+            error_log( 'Unexpected response code while sending telemetry data: ' . $status_code );
+        }
+    }
+}
+add_action( 'projects_wp_send_telemetry_cron', 'projects_wp_send_telemetry_data' );
+
+/**
+ * Trigger telemetry data send on 'projects' post save.
+ *
+ * @param int $post_id The post ID.
+ * @param WP_Post $post The post object.
+ * @param bool $update Whether this is an update.
+ */
+function projects_wp_send_telemetry_on_save( $post_id, $post, $update ) {
+    // Bail early if not 'projects' post type
+    if ( 'projects' !== $post->post_type ) {
+        return;
+    }
+
+    // Ensure telemetry data is sent
+    projects_wp_send_telemetry_data();
+}
+add_action( 'save_post', 'projects_wp_send_telemetry_on_save', 10, 3 );
