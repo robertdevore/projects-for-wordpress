@@ -228,6 +228,9 @@ function projects_wp_get_github_data( $github_url ) {
 
 /**
  * Handle Download Redirect and Increment Download Count
+ * 
+ * @since  1.0.0
+ * @return void
  */
 function projects_wp_handle_download_redirect() {
     $project_id = get_query_var( 'project_download_id' );
@@ -438,6 +441,7 @@ function projects_wp_get_projects_data( $request ) {
                 'permalink'      => get_permalink(),
                 'thumbnail'      => get_the_post_thumbnail_url( $project_id, 'large' ),
                 'download_count' => (int) get_post_meta( $project_id, '_projects_wp_download_count', true ),
+                'download_url'   => esc_url( site_url( '/download/' . $project_id ) ),
                 'github_url'     => $github_url,
                 'github_data'    => [
                     'owner'        => [
@@ -531,6 +535,7 @@ function projects_wp_get_popular_projects( $data ) {
                 'id'             => get_the_ID(),
                 'title'          => get_the_title(),
                 'download_count' => (int) get_post_meta( get_the_ID(), '_projects_wp_download_count', true ),
+                'download_url'   => esc_url( site_url( '/download/' . get_the_ID() ) ),
                 'github_url'     => get_post_meta( get_the_ID(), '_projects_wp_github_url', true ),
                 'permalink'      => get_permalink(),
             ];
@@ -585,6 +590,31 @@ function projects_wp_enqueue_project_styles() {
     }
 }
 add_action( 'wp_enqueue_scripts', 'projects_wp_enqueue_project_styles' );
+
+/**
+ * Modify the number of posts per page for the 'projects' post type archive.
+ *
+ * Ensures only the 'projects' archive page is affected without changing global settings.
+ *
+ * @param WP_Query $query The WordPress query object.
+ */
+function projects_wp_custom_posts_per_page( $query ) {
+    if ( is_admin() || ! $query->is_main_query() ) {
+        return;
+    }
+
+    if ( is_post_type_archive( 'projects' ) ) {
+        $query->set( 'posts_per_page', 12 );
+    }
+}
+add_action( 'pre_get_posts', 'projects_wp_custom_posts_per_page', 1 );
+
+add_filter( 'query_loop_block_query_vars', function ( $query, $block ) {
+    if ( isset( $query['post_type'] ) && $query['post_type'] === 'projects' ) {
+        $query['posts_per_page'] = 12;
+    }
+    return $query;
+}, 10, 2 );
 
 /**
  * Add social sharing buttons with Tabler icons.

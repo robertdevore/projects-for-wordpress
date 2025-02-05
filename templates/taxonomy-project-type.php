@@ -18,7 +18,7 @@ get_header();
                         if ( has_post_thumbnail() ) {
                             the_post_thumbnail( 'large' ); // Full-width image
                         } else {
-                            echo '<img src="' . esc_url( plugin_dir_url( __FILE__ ) . 'assets/images/placeholder-thumbnail.jpg' ) . '" alt="' . esc_attr__( 'Project Thumbnail', 'projects-for-wordpress' ) . '">';
+                            echo '<img src="' . esc_url( plugin_dir_url( __FILE__ ) . 'assets/images/placeholder-thumbnail.jpg' ) . '" alt="' . esc_attr__( 'Project Thumbnail', 'projects-wp' ) . '">';
                         }
                         ?>
                     </a>
@@ -28,17 +28,17 @@ get_header();
                     <?php echo the_excerpt(); ?>
                     <div class="project-buttons">
                         <a href="<?php echo esc_url( site_url( '/download/' . get_the_ID() ) ); ?>" class="button project-download-button">
-                            <?php esc_html_e( 'Download', 'projects-for-wordpress' ); ?>
+                            <?php esc_html_e( 'Download', 'projects-wp' ); ?>
                         </a>
                         <a href="<?php the_permalink(); ?>" class="button project-view-button">
-                            <?php esc_html_e( 'View Project', 'projects-for-wordpress' ); ?>
+                            <?php esc_html_e( 'View Project', 'projects-wp' ); ?>
                         </a>
                     </div>
                 </div>
             <?php endwhile; ?>
         </div>
     <?php else : ?>
-        <p><?php esc_html_e( 'No projects found for this type.', 'projects-for-wordpress' ); ?></p>
+        <p><?php esc_html_e( 'No projects found for this type.', 'projects-wp' ); ?></p>
     <?php endif; ?>
 </div>
 

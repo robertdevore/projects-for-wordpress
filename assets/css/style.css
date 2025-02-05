@@ -195,7 +195,8 @@
     margin-bottom: 15px;
 }
 .project-archive .project-title {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
+    font-weight: 600;
     margin: 10px 0;
     text-align: center;
 }
@@ -237,4 +238,33 @@
 .project-archive .project-buttons .project-view-button:hover {
     background-color: #c9c9c9;
     color: #000;
+}
+
+.project-archive .pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.project-archive .pagination ul {
+    display: inline-flex;
+    list-style: none;
+    padding: 0;
+}
+
+.project-archive .pagination li {
+    margin: 0 5px;
+}
+
+.project-archive .pagination a, .pagination span {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #0073aa;
+    border: 1px solid #0073aa;
+    border-radius: 4px;
+}
+
+.project-archive .pagination .current {
+    background: #0073aa;
+    color: #fff;
 }
