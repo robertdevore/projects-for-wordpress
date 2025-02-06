@@ -27,10 +27,12 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-/**
- * Current plugin version.
- */
+// Current plugin version.
 define( 'PROJECTS_FOR_WORDPRESS_VERSION', time() );
+
+// Add the required files.
+require 'admin/admin-settings.php';
+require 'includes/helper-functions.php';
 
 require 'includes/plugin-update-checker/plugin-update-checker.php';
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
@@ -258,92 +260,6 @@ function projects_wp_handle_download_redirect() {
     }
 }
 add_action( 'template_redirect', 'projects_wp_handle_download_redirect' );
-
-/**
- * Add settings page for GitHub API token.
- */
-function projects_wp_add_settings_page() {
-    add_submenu_page(
-        'edit.php?post_type=projects',
-        __( 'Settings', 'projects-wp' ),
-        __( 'Settings', 'projects-wp' ),
-        'manage_options',
-        'projects-wp-settings',
-        'projects_wp_render_settings_page'
-    );
-}
-add_action( 'admin_menu', 'projects_wp_add_settings_page' );
-
-/**
- * Render the settings page.
- */
-function projects_wp_render_settings_page() {
-    // Handle settings save
-    if ( isset( $_POST['projects_wp_save_settings'] ) ) {
-        projects_wp_save_settings();
-    }
-
-    // Retrieve saved settings
-    $api_token       = get_option( 'projects_wp_github_api_token', '' );
-    $share_telemetry = get_option( 'projects_wp_share_telemetry', '0' ); // Default to '0'
-
-    ?>
-    <div class="wrap">
-        <h1><?php esc_html_e( 'Projects for WordPress Settings', 'projects-wp' ); ?></h1>
-        <form method="post">
-            <?php wp_nonce_field( 'projects_wp_save_settings', 'projects_wp_settings_nonce' ); ?>
-            <table class="form-table">
-                <tr>
-                    <th scope="row">
-                        <label for="projects_wp_github_api_token"><?php esc_html_e( 'GitHub API Token', 'projects-wp' ); ?></label>
-                    </th>
-                    <td>
-                        <input type="password" id="projects_wp_github_api_token" name="projects_wp_github_api_token" value="<?php echo esc_attr( $api_token ); ?>" class="regular-text" />
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">
-                        <label for="projects_wp_share_telemetry"><?php esc_html_e( 'Share Telemetry Data', 'projects-wp' ); ?></label>
-                    </th>
-                    <td>
-                        <input type="checkbox" id="projects_wp_share_telemetry" name="projects_wp_share_telemetry" value="1" <?php checked( $share_telemetry, '1' ); ?> />
-                        <p class="description"><?php esc_html_e( 'Allow sharing telemetry data about your projects to help improve the plugin.', 'projects-wp' ); ?></p>
-                    </td>
-                </tr>
-            </table>
-            <input type="hidden" name="projects_wp_save_settings" value="1" />
-            <?php submit_button( __( 'Save Settings', 'projects-wp' ) ); ?>
-        </form>
-    </div>
-    <?php
-}
-
-/**
- * Save the settings from the settings page.
- */
-function projects_wp_save_settings() {
-    // Verify the nonce
-    if ( ! isset( $_POST['projects_wp_settings_nonce'] ) || ! wp_verify_nonce( $_POST['projects_wp_settings_nonce'], 'projects_wp_save_settings' ) ) {
-        return;
-    }
-
-    // Save GitHub API token
-    if ( isset( $_POST['projects_wp_github_api_token'] ) ) {
-        $api_token = sanitize_text_field( $_POST['projects_wp_github_api_token'] );
-        update_option( 'projects_wp_github_api_token', $api_token );
-    }
-
-    // Save telemetry sharing preference
-    $share_telemetry = isset( $_POST['projects_wp_share_telemetry'] ) ? '1' : '0';
-    update_option( 'projects_wp_share_telemetry', $share_telemetry );
-
-    // Set a transient for the success message
-    set_transient( 'projects_wp_settings_saved', true, 30 );
-
-    // Redirect back to the settings page
-    wp_redirect( add_query_arg( 'page', 'projects-wp-settings', admin_url( 'edit.php?post_type=projects' ) ) );
-    exit;
-}
 
 /**
  * Add Download Count Column to Projects Admin Table
@@ -588,8 +504,28 @@ function projects_wp_enqueue_project_styles() {
             PROJECTS_FOR_WORDPRESS_VERSION
         );
     }
+
+    if ( is_singular( 'projects' ) ) {
+        wp_enqueue_script(
+            'projects-wp-buttons',
+            plugin_dir_url( __FILE__ ) . 'assets/js/buttons.js',
+            [],
+            PROJECTS_FOR_WORDPRESS_VERSION
+        );
+    }
 }
 add_action( 'wp_enqueue_scripts', 'projects_wp_enqueue_project_styles' );
+
+/**
+ * Enqueue admin styles.
+ * 
+ * @since  1.0.0
+ * @return void
+ */
+function projects_wp_admin_styles() {
+    wp_enqueue_style( 'projects-wp-admin-css', plugin_dir_url( __FILE__ ) . 'assets/css/admin-styles.css' );
+}
+add_action( 'admin_enqueue_scripts', 'projects_wp_admin_styles' );
 
 /**
  * Modify the number of posts per page for the 'projects' post type archive.
@@ -609,12 +545,26 @@ function projects_wp_custom_posts_per_page( $query ) {
 }
 add_action( 'pre_get_posts', 'projects_wp_custom_posts_per_page', 1 );
 
-add_filter( 'query_loop_block_query_vars', function ( $query, $block ) {
+/**
+ * Modify the posts per page for the 'projects' post type archive in Full Site Editing (FSE) themes.
+ *
+ * This function ensures that the 'projects' post type archive displays 12 posts per page,
+ * even when using an FSE theme with a Query Loop block.
+ *
+ * @param array  $query The existing query variables for the Query Loop block.
+ * @param object $block The current block object (not used but available if needed).
+ * 
+ * @return array Modified query variables with 'posts_per_page' set for the projects archive.
+ */
+function modify_projects_posts_per_page_fse( $query, $block ) {
+    // Ensure we are modifying the archive query for the 'projects' post type.
     if ( isset( $query['post_type'] ) && $query['post_type'] === 'projects' ) {
         $query['posts_per_page'] = 12;
     }
+
     return $query;
-}, 10, 2 );
+}
+add_filter( 'query_loop_block_query_vars', 'modify_projects_posts_per_page_fse', 10, 2 );
 
 /**
  * Add social sharing buttons with Tabler icons.
