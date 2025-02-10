@@ -60,7 +60,6 @@ function projects_wp_render_settings_page() {
     // Archives Settings
     $archives_settings = [
         'archive_title'     => __( 'Archive Title', 'projects-wp' ),
-        'projects_per_page' => __( 'Projects Per Page', 'projects-wp' ),
         'project_title'     => __( 'Project Title', 'projects-wp' ),
         'project_excerpt'   => __( 'Project Excerpt', 'projects-wp' ),
         'project_buttons'   => __( 'Project Buttons', 'projects-wp' ),
@@ -166,7 +165,6 @@ function projects_wp_save_settings() {
     // Archives Settings Keys
     $archives_keys = [
         'archive_title',
-        'projects_per_page',
         'project_title',
         'project_excerpt',
         'project_buttons',
