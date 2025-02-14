@@ -100,6 +100,18 @@ function projects_wp_get_github_release_url( $github_url ) {
     }
 
     $data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+    // Check for assets and return the URL of a custom asset if available.
+    if ( ! empty( $data['assets'] ) && is_array( $data['assets'] ) ) {
+        foreach ( $data['assets'] as $asset ) {
+            // For example, check if the asset is a zip file and maybe even match a specific name.
+            if ( isset( $asset['name'] ) && pathinfo( $asset['name'], PATHINFO_EXTENSION ) === 'zip' ) {
+                return $asset['browser_download_url'];
+            }
+        }
+    }
+
+    // Fallback to the auto-generated zipball_url.
     return $data['zipball_url'] ?? false;
 }
 
@@ -109,7 +121,7 @@ function projects_wp_get_github_data( $github_url ) {
         return null;
     }
 
-    $api_url = str_replace( 'https://github.com/', 'https://api.github.com/repos/', rtrim( $github_url, '/' ) );
+    $api_url   = str_replace( 'https://github.com/', 'https://api.github.com/repos/', rtrim( $github_url, '/' ) );
     $api_token = get_option( 'projects_wp_github_api_token', '' );
 
     $headers = [ 'Accept' => 'application/vnd.github.v3+json' ];
@@ -133,6 +145,8 @@ function projects_wp_get_github_data( $github_url ) {
     }
 
     $response_code = wp_remote_retrieve_response_code( $response );
+    error_log( "GitHub API response code: $response_code" );
+
     if ( $response_code === 403 ) {
         $rate_limit_remaining = wp_remote_retrieve_header( $response, 'x-ratelimit-remaining' );
         $rate_limit_reset = wp_remote_retrieve_header( $response, 'x-ratelimit-reset' );

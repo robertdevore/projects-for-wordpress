@@ -1,5 +1,13 @@
 <?php
-get_header();
+// Check if the theme is an FSE (block theme)
+$is_fse_theme = wp_theme_has_theme_json() && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
+
+if ( $is_fse_theme ) {
+    wp_head();
+    echo do_blocks( '<!-- wp:template-part {"slug":"header"} /-->' );
+} else {
+    get_header();
+}
 
 $settings       = projects_wp_settings();
 $project_id     = get_the_ID();
@@ -20,26 +28,53 @@ $owner = projects_wp_github_owner( $owner_name );
 
 // Fetch the version number from the GitHub API if the URL is set.
 if ( $github_url ) {
-    $api_url = str_replace( 'https://github.com/', 'https://api.github.com/repos/', rtrim( $github_url, '/' ) ) . '/releases/latest';
-    $response = wp_remote_get( $api_url );
+    // Retrieve the GitHub API token from the plugin settings.
+    $github_token = get_option( 'projects_wp_github_api_token', '' );
 
-    if ( ! is_wp_error( $response ) ) {
+    // Prepare the API URL.
+    $api_url = str_replace( 'https://github.com/', 'https://api.github.com/repos/', rtrim( $github_url, '/' ) ) . '/releases/latest';
+
+    // Check if the response is cached.
+    $transient_key = 'github_api_response_' . md5( $api_url );
+    $response = get_transient( $transient_key );
+
+    if ( false === $response ) {
+        // Prepare the request arguments.
+        $args = array();
+        if ( ! empty( $github_token ) ) {
+            $args['headers'] = array(
+                'Authorization' => 'token ' . $github_token, // Include the token in the headers.
+            );
+        }
+
+        // Make the API request.
+        $response = wp_remote_get( $api_url, $args );
+
+        // Cache the response for 1 hour if the request is successful.
+        if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response ) ) {
+            set_transient( $transient_key, $response, HOUR_IN_SECONDS );
+        }
+    }
+
+    // Handle the response.
+    if ( is_wp_error( $response ) ) {
+        error_log( 'GitHub API error: ' . $response->get_error_message() );
+    } else {
         $response_code = wp_remote_retrieve_response_code( $response );
+        $response_body = wp_remote_retrieve_body( $response );
+        error_log( 'GitHub API response code: ' . $response_code );
+        error_log( 'GitHub API response body: ' . $response_body );
 
         if ( $response_code === 200 ) {
-            $data = json_decode( wp_remote_retrieve_body( $response ), true );
+            $data = json_decode( $response_body, true );
 
             // Check if tag_name exists in the response.
             if ( isset( $data['tag_name'] ) ) {
                 $version = esc_html( $data['tag_name'] );
             }
         } else {
-            // Log the error for debugging purposes.
             error_log( "GitHub API error: HTTP $response_code for URL $api_url" );
         }
-    } else {
-        // Log the error for debugging purposes.
-        error_log( 'GitHub API error: ' . $response->get_error_message() );
     }
 }
 
@@ -48,6 +83,8 @@ if ( $last_updated ) {
     $last_updated = date_i18n( get_option( 'date_format' ), strtotime( $last_updated ) );
 }
 ?>
+
+<body <?php body_class(); ?>>
 
 <div class="project-single-container">
     <div class="project-header">
@@ -175,4 +212,25 @@ if ( $last_updated ) {
 </div>
 
 <?php
-get_footer();
+if ( $is_fse_theme ) {
+    wp_footer();
+    echo do_blocks( '<!-- wp:template-part {"slug":"footer"} /-->' );
+} else {
+    get_footer();
+}
+?>
+</body>
+
+<?php
+
+function projects_wp_enqueue_theme_styles() {
+    if ( is_singular( 'projects' ) || is_post_type_archive( 'projects' ) ) {
+        // Enqueue the theme's main stylesheet.
+        wp_enqueue_style( 'theme-style', get_stylesheet_uri() );
+
+        // Enqueue additional theme styles if needed.
+        wp_enqueue_style( 'theme-header-style', get_template_directory_uri() . '/css/header.css' );
+        wp_enqueue_style( 'theme-footer-style', get_template_directory_uri() . '/css/footer.css' );
+    }
+}
+add_action( 'wp_enqueue_scripts', 'projects_wp_enqueue_theme_styles' );

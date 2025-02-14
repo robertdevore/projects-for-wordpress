@@ -11,7 +11,7 @@ if ( ! defined( 'WPINC' ) ) {
 function projects_wp_add_meta_boxes() {
     add_meta_box(
         'projects_wp_github_url',
-        __( 'GitHub Repository URL', 'projects-wp' ),
+        __( 'GitHub URL', 'projects-wp' ),
         'projects_wp_render_meta_box',
         'projects',
         'side'

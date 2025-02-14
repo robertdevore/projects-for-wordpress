@@ -1,5 +1,13 @@
 <?php
-get_header();
+// Check if the theme is an FSE (block theme)
+$is_fse_theme = wp_theme_has_theme_json() && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
+
+if ( $is_fse_theme ) {
+    wp_head();
+    echo do_blocks( '<!-- wp:template-part {"slug":"header"} /-->' );
+} else {
+    get_header();
+}
 
 $settings = projects_wp_settings();
 
@@ -56,4 +64,9 @@ $settings = projects_wp_settings();
 </div>
 
 <?php
-get_footer();
+if ( $is_fse_theme ) {
+    wp_footer();
+    echo do_blocks( '<!-- wp:template-part {"slug":"footer"} /-->' );
+} else {
+    get_footer();
+}

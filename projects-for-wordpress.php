@@ -47,7 +47,7 @@ require 'admin/admin-settings.php';
 require 'admin/cpt-taxonomy.php';
 require 'admin/metabox.php';
 require 'includes/helper-functions.php';
-require 'admin/telemetry-data.php';
+//require 'admin/telemetry-data.php';
 
 /**
  * Flush rewrite rules on activation.
@@ -134,7 +134,7 @@ function projects_wp_add_download_count_column( $columns ) {
     $columns['download_count'] = __( 'Download Count', 'projects-wp' );
     return $columns;
 }
-add_filter( 'manage_project_posts_columns', 'projects_wp_add_download_count_column' );
+add_filter( 'manage_projects_posts_columns', 'projects_wp_add_download_count_column' );
 
 /**
  * Display Download Count in Admin Column
@@ -148,7 +148,7 @@ function projects_wp_display_download_count_column( $column, $post_id ) {
         echo $download_count ? esc_html( $download_count ) : __( '0', 'projects-wp' );
     }
 }
-add_action( 'manage_project_posts_custom_column', 'projects_wp_display_download_count_column', 10, 2 );
+add_action( 'manage_projects_posts_custom_column', 'projects_wp_display_download_count_column', 10, 2 );
 
 /**
  * Make the Download Count Column Sortable
@@ -160,7 +160,7 @@ function projects_wp_sortable_columns( $columns ) {
     $columns['download_count'] = 'download_count';
     return $columns;
 }
-add_filter( 'manage_edit-project_sortable_columns', 'projects_wp_sortable_columns' );
+add_filter( 'manage_edit-projects_sortable_columns', 'projects_wp_sortable_columns' );
 
 /**
  * Handle Sorting for Download Count
@@ -235,13 +235,28 @@ add_filter( 'template_include', 'projects_wp_template_loader' );
  * @return void
  */
 function projects_wp_enqueue_project_styles() {
-    if ( is_singular( 'projects' ) || is_post_type_archive( 'projects' ) ) {
-        wp_enqueue_style(
+    if ( is_singular( 'projects' ) || is_post_type_archive( 'projects' ) || is_tax( 'project-type' ) ) {
+        $is_fse_theme = wp_theme_has_theme_json() && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
+    
+        // Register stylesheet for both theme types
+        wp_register_style(
             'projects-wp-styles',
             plugin_dir_url( __FILE__ ) . 'assets/css/style.css',
             [],
             PROJECTS_FOR_WORDPRESS_VERSION
         );
+    
+        if ( $is_fse_theme ) {
+            // Inline block style enqueue (needed for FSE themes)
+            add_action( 'wp_footer', function () {
+                echo '<style id="projects-wp-styles">';
+                echo file_get_contents( plugin_dir_path( __FILE__ ) . 'assets/css/style.css' );
+                echo '</style>';
+            } );
+        } else {
+            // Classic theme enqueue
+            wp_enqueue_style( 'projects-wp-styles' );
+        }    
     }
 
     if ( is_singular( 'projects' ) ) {
