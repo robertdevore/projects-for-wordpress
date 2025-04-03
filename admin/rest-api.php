@@ -9,6 +9,8 @@ if ( ! defined( 'WPINC' ) ) {
  * Callback function for the custom projects endpoint.
  *
  * @param WP_REST_Request $request The REST API request object.
+ * 
+ * @since  1.0.0
  * @return WP_REST_Response
  */
 function projects_wp_get_projects_data( $request ) {
@@ -18,18 +20,18 @@ function projects_wp_get_projects_data( $request ) {
         'paged'          => $request->get_param( 'page' ) ?? 1,
     ];
 
-    $query = new WP_Query( $args );
+    $query     = new WP_Query( $args );
     $projects = [];
 
     if ( $query->have_posts() ) {
         while ( $query->have_posts() ) {
             $query->the_post();
 
-            $project_id = get_the_ID();
-            $github_url = get_post_meta( $project_id, '_projects_wp_github_url', true );
+            $project_id  = get_the_ID();
+            $github_url  = get_post_meta( $project_id, '_projects_wp_github_url', true );
             $github_data = projects_wp_get_github_data( $github_url );
 
-            // Fetch project-type taxonomy terms (names)
+            // Fetch project-type taxonomy terms (names).
             $project_types = wp_get_post_terms( $project_id, 'project-type', [
                 'fields' => 'names',
             ] );
@@ -77,14 +79,17 @@ function projects_wp_get_projects_data( $request ) {
 
 /**
  * Register REST API endpoint for popular projects.
+ * 
+ * @since  1.0.0
+ * @return VolumeVolumeInfoDimensions
  */
 function projects_wp_register_popular_endpoint() {
     register_rest_route( 
         'projects/v1', 
         '/popular', 
         [
-            'methods'  => 'GET',
-            'callback' => 'projects_wp_get_popular_projects',
+            'methods'             => 'GET',
+            'callback'            => 'projects_wp_get_popular_projects',
             'permission_callback' => '__return_true',
         ]
     );
@@ -92,6 +97,9 @@ function projects_wp_register_popular_endpoint() {
 
 /**
  * Callback function for popular projects endpoint.
+ * 
+ * @since  1.0.0
+ * @return void
  */
 function projects_wp_get_popular_projects( $data ) {
     $args = [
@@ -102,7 +110,7 @@ function projects_wp_get_popular_projects( $data ) {
         'order'          => 'DESC',
     ];
 
-    $query = new WP_Query( $args );
+    $query    = new WP_Query( $args );
     $projects = [];
 
     if ( $query->have_posts() ) {
@@ -123,4 +131,3 @@ function projects_wp_get_popular_projects( $data ) {
     return rest_ensure_response( $projects );
 }
 add_action( 'rest_api_init', 'projects_wp_register_popular_endpoint' );
-

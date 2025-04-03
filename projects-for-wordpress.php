@@ -104,18 +104,18 @@ function projects_wp_handle_download_redirect() {
         $download_url = projects_wp_get_github_release_url( $github_url );
 
         if ( $download_url ) {
-            // Increment download count
+            // Increment download count.
             $download_count = (int) get_post_meta( $project_id, '_projects_wp_download_count', true );
             $download_count++;
             update_post_meta( $project_id, '_projects_wp_download_count', $download_count );
 
-            // Redirect to the GitHub ZIP file
+            // Redirect to the GitHub ZIP file.
             wp_redirect( esc_url_raw( $download_url ) );
             exit;
         } else {
             wp_die(
-                __( 'Invalid download URL. Please check the GitHub repository.', 'projects-wp' ),
-                __( 'Download Error', 'projects-wp' ),
+                esc_html__( 'Invalid download URL. Please check the GitHub repository.', 'projects-wp' ),
+                esc_html__( 'Download Error', 'projects-wp' ),
                 [ 'response' => 404 ]
             );
         }
@@ -130,7 +130,7 @@ add_action( 'template_redirect', 'projects_wp_handle_download_redirect' );
  * @return mixed
  */
 function projects_wp_add_download_count_column( $columns ) {
-    $columns['download_count'] = __( 'Download Count', 'projects-wp' );
+    $columns['download_count'] = esc_html__( 'Download Count', 'projects-wp' );
     return $columns;
 }
 add_filter( 'manage_projects_posts_columns', 'projects_wp_add_download_count_column' );
@@ -187,8 +187,8 @@ add_action( 'pre_get_posts', 'projects_wp_sort_download_count_column' );
  */
 function projects_wp_register_custom_endpoint() {
     register_rest_route(
-        'projects/v1', // Namespace and version
-        '/projects', // Endpoint
+        'projects/v1',
+        '/projects',
         [
             'methods'  => WP_REST_Server::READABLE,
             'callback' => 'projects_wp_get_projects_data',
@@ -312,7 +312,6 @@ add_action( 'pre_get_posts', 'projects_wp_custom_posts_per_page', 1 );
  * @param array  $query The existing query variables for the Query Loop block.
  * @param object $block The current block object (not used but available if needed).
  * 
- * 
  * @since  1.0.0
  * @return array Modified query variables with 'posts_per_page' set for the projects archive.
  */
@@ -331,7 +330,6 @@ add_filter( 'query_loop_block_query_vars', 'modify_projects_posts_per_page_fse',
  *
  * @param string $content The post content.
  * 
- * 
  * @since  1.0.0
  * @return void
  */
@@ -341,37 +339,37 @@ function projects_wp_social_sharing_buttons( $project_id ) {
 
     echo '<div class="project-social-sharing">';
 
-    // Facebook
+    // Facebook.
     echo '<a href="https://www.facebook.com/sharer/sharer.php?u=' . $url . '" target="_blank" rel="noopener noreferrer">';
     echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-facebook" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="0" y="0" width="24" height="24" fill="none"/><path d="M7 10v-3a1 1 0 0 1 1 -1h3v-4h4v4h3a1 1 0 0 1 1 1v3h-4v10h-4v-10h-3" /></svg>';
     echo '</a>';
 
-    // X (Twitter)
+    // X (Twitter).
     echo '<a href="https://twitter.com/intent/tweet?text=' . $title . '&url=' . $url . '" target="_blank" rel="noopener noreferrer">';
     echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4l10 16m0 -16l-10 16" /></svg>';
     echo '</a>';
 
-    // LinkedIn
+    // LinkedIn.
     echo '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' . $url . '" target="_blank" rel="noopener noreferrer">';
     echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="4" y="4" width="16" height="16" rx="2" /><line x1="8" y1="11" x2="8" y2="16" /><line x1="8" y1="8" x2="8" y2="8.01" /><line x1="12" y1="16" x2="12" y2="11" /><path d="M16 16v-3a2 2 0 0 0 -4 0" /></svg>';
     echo '</a>';
 
-    // Reddit
+    // Reddit.
     echo '<a href="https://www.reddit.com/submit?url=' . $url . '&title=' . $title . '" target="_blank" rel="noopener noreferrer">';
     echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-reddit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M12 12m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0" /><path d="M12 12h0" /><path d="M8.5 13c.667 .667 1.333 1 2 1s1.333 -.333 2 -1" /></svg>';
     echo '</a>';
 
-    // WhatsApp
+    // WhatsApp.
     echo '<a href="https://wa.me/?text=' . $title . '%20' . $url . '" target="_blank" rel="noopener noreferrer">';
     echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-whatsapp" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21l1.65 -4.75a9 9 0 1 1 3.85 3.85z" /><path d="M9 10c1 2 3 3 5 4" /><path d="M9 13c1 1 2 2 4 3" /></svg>';
     echo '</a>';
 
-    // Pinterest
+    // Pinterest.
     echo '<a href="https://pinterest.com/pin/create/button/?url=' . $url . '&description=' . $title . '" target="_blank" rel="noopener noreferrer">';
     echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-pinterest" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M8 17c1 -2 1.5 -4 .5 -6s-.5 -4 .5 -6" /><path d="M15 11c.667 -1 1.667 -2.333 3 -4" /></svg>';
     echo '</a>';
 
-    // Email
+    // Email.
     echo '<a href="mailto:?subject=' . $title . '&body=' . $url . '" target="_blank" rel="noopener noreferrer">';
     echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7l9 6l9 -6" /><rect x="3" y="5" width="18" height="14" rx="2" /></svg>';
     echo '</a>';

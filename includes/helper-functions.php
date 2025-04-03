@@ -8,6 +8,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Retrieve all plugin settings in a single call.
  *
+ * @since  1.0.0
  * @return array The array of plugin settings.
  */
 function projects_wp_settings() {
@@ -45,6 +46,7 @@ function projects_wp_settings() {
  * 
  * @param mixed $owner_name
  * 
+ * @since  1.0.0
  * @return mixed
  */
 function projects_wp_github_owner( $owner_name = NULL ) {
@@ -54,22 +56,22 @@ function projects_wp_github_owner( $owner_name = NULL ) {
 
     // Set up the context with a User-Agent header (GitHub requires this).
     $options = [
-        "http" => [
-            "method"  => "GET",
-            "header"  => "User-Agent: WORDPRESS\r\n"
+        'http' => [
+            'method' => 'GET',
+            'header' => "User-Agent: WORDPRESS\r\n"
         ]
     ];
     $context = stream_context_create( $options );
 
-    // Fetch the API response
+    // Fetch the API response.
     $response = file_get_contents( $owner, false, $context );
 
     if ( $response === false ) {
         die( 'Error fetching data from GitHub API.' );
     }
 
-    // Decode the JSON response to an associative array
-    $owner = json_decode($response, true);
+    // Decode the JSON response to an associative array.
+    $owner = json_decode( $response, true );
 
     if ( json_last_error() !== JSON_ERROR_NONE ) {
         die( 'Error decoding JSON data: ' . json_last_error_msg() );
@@ -115,6 +117,14 @@ function projects_wp_get_github_release_url( $github_url ) {
     return $data['zipball_url'] ?? false;
 }
 
+/**
+ * Retrieves GitHub repository data from the GitHub API with optional token authentication and caching.
+ *
+ * @param string $github_url The full URL of the GitHub repository.
+ * 
+ * @since  1.0.0
+ * @return array|null Associative array of GitHub repo data on success, or null on failure.
+ */
 function projects_wp_get_github_data( $github_url ) {
     if ( empty( $github_url ) ) {
         error_log( 'GitHub URL is empty.' );
@@ -131,7 +141,7 @@ function projects_wp_get_github_data( $github_url ) {
         error_log( 'GitHub API token is missing. Using unauthenticated requests.' );
     }
 
-    $cache_key = 'projects_wp_github_data_' . md5( $api_url );
+    $cache_key   = 'projects_wp_github_data_' . md5( $api_url );
     $cached_data = get_transient( $cache_key );
     if ( $cached_data ) {
         return $cached_data;
@@ -145,7 +155,6 @@ function projects_wp_get_github_data( $github_url ) {
     }
 
     $response_code = wp_remote_retrieve_response_code( $response );
-    error_log( "GitHub API response code: $response_code" );
 
     if ( $response_code === 403 ) {
         $rate_limit_remaining = wp_remote_retrieve_header( $response, 'x-ratelimit-remaining' );

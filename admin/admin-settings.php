@@ -14,8 +14,8 @@ if ( ! defined( 'WPINC' ) ) {
 function projects_wp_add_settings_page() {
     add_submenu_page(
         'edit.php?post_type=projects',
-        __( 'Settings', 'projects-wp' ),
-        __( 'Settings', 'projects-wp' ),
+        esc_html__( 'Settings', 'projects-wp' ),
+        esc_html__( 'Settings', 'projects-wp' ),
         'manage_options',
         'projects-wp-settings',
         'projects_wp_render_settings_page'
@@ -30,7 +30,7 @@ add_action( 'admin_menu', 'projects_wp_add_settings_page' );
  * @return void
  */
 function projects_wp_render_settings_page() {
-    // Handle settings save
+    // Handle settings save.
     if ( isset( $_POST['projects_wp_save_settings'] ) ) {
         projects_wp_save_settings();
     }
@@ -40,29 +40,29 @@ function projects_wp_render_settings_page() {
         delete_transient( 'projects_wp_settings_saved' );
     }
 
-    // Retrieve saved settings
+    // Retrieve saved settings.
     $api_token       = get_option( 'projects_wp_github_api_token', '' );
     $share_telemetry = get_option( 'projects_wp_share_telemetry', '0' );
 
     // Templates Settings.
     $templates_settings = [
-        'version'           => __( 'Version', 'projects-wp' ),
-        'last_updated'      => __( 'Last Updated', 'projects-wp' ),
-        'license'           => __( 'License', 'projects-wp' ),
-        'language'          => __( 'Language', 'projects-wp' ),
-        'downloads'         => __( 'Downloads', 'projects-wp' ),
-        'forks'             => __( 'Forks', 'projects-wp' ),
-        'stargazers_count'  => __( 'Stars', 'projects-wp' ),
-        'open_issues_count' => __( 'Issues', 'projects-wp' ),
-        'github_owner'      => __( 'GitHub Owner', 'projects-wp' ),
+        'version'           => esc_html__( 'Version', 'projects-wp' ),
+        'last_updated'      => esc_html__( 'Last Updated', 'projects-wp' ),
+        'license'           => esc_html__( 'License', 'projects-wp' ),
+        'language'          => esc_html__( 'Language', 'projects-wp' ),
+        'downloads'         => esc_html__( 'Downloads', 'projects-wp' ),
+        'forks'             => esc_html__( 'Forks', 'projects-wp' ),
+        'stargazers_count'  => esc_html__( 'Stars', 'projects-wp' ),
+        'open_issues_count' => esc_html__( 'Issues', 'projects-wp' ),
+        'github_owner'      => esc_html__( 'GitHub Owner', 'projects-wp' ),
     ];
 
     // Archives Settings
     $archives_settings = [
-        'archive_title'     => __( 'Archive Title', 'projects-wp' ),
-        'project_title'     => __( 'Project Title', 'projects-wp' ),
-        'project_excerpt'   => __( 'Project Excerpt', 'projects-wp' ),
-        'project_buttons'   => __( 'Project Buttons', 'projects-wp' ),
+        'archive_title'     => esc_html__( 'Archive Title', 'projects-wp' ),
+        'project_title'     => esc_html__( 'Project Title', 'projects-wp' ),
+        'project_excerpt'   => esc_html__( 'Project Excerpt', 'projects-wp' ),
+        'project_buttons'   => esc_html__( 'Project Buttons', 'projects-wp' ),
     ];
     
     ?>
@@ -95,13 +95,13 @@ function projects_wp_render_settings_page() {
 
             <h2><?php esc_html_e( 'Templates Settings', 'projects-wp' ); ?></h2>
             <table class="form-table">
-                <?php foreach ($templates_settings as $key => $label) :
+                <?php foreach ( $templates_settings as $key => $label ) :
                     $value = get_option( "projects_wp_templates_$key", '0' ); ?>
                     <tr>
-                        <th scope="row"><?php echo esc_html($label); ?></th>
+                        <th scope="row"><?php esc_html_e( $label ); ?></th>
                         <td>
                             <label class="toggle-switch">
-                                <input type="checkbox" name="projects_wp_templates_<?php echo esc_attr($key); ?>" value="1" <?php checked($value, '1'); ?> />
+                                <input type="checkbox" name="projects_wp_templates_<?php esc_attr_e( $key ); ?>" value="1" <?php checked($value, '1'); ?> />
                                 <span class="slider"></span>
                             </label>
                         </td>
@@ -111,13 +111,13 @@ function projects_wp_render_settings_page() {
 
             <h2><?php esc_html_e( 'Archives Settings', 'projects-wp' ); ?></h2>
             <table class="form-table">
-                <?php foreach ($archives_settings as $key => $label) :
+                <?php foreach ( $archives_settings as $key => $label ) :
                     $value = get_option( "projects_wp_archives_$key", '0' ); ?>
                     <tr>
-                        <th scope="row"><?php echo esc_html($label); ?></th>
+                        <th scope="row"><?php esc_html_e( $label ); ?></th>
                         <td>
                             <label class="toggle-switch">
-                                <input type="checkbox" name="projects_wp_archives_<?php echo esc_attr($key); ?>" value="1" <?php checked($value, '1'); ?> />
+                                <input type="checkbox" name="projects_wp_archives_<?php esc_attr_e($key); ?>" value="1" <?php checked($value, '1'); ?> />
                                 <span class="slider"></span>
                             </label>
                         </td>
@@ -126,7 +126,7 @@ function projects_wp_render_settings_page() {
             </table>
 
             <input type="hidden" name="projects_wp_save_settings" value="1" />
-            <?php submit_button( __( 'Save Settings', 'projects-wp' ) ); ?>
+            <?php submit_button( esc_html__( 'Save Settings', 'projects-wp' ) ); ?>
         </form>
     </div>
     <?php
@@ -146,7 +146,7 @@ function projects_wp_save_settings() {
     update_option( 'projects_wp_github_api_token', sanitize_text_field( $_POST['projects_wp_github_api_token'] ?? '' ) );
     update_option( 'projects_wp_share_telemetry', isset( $_POST['projects_wp_share_telemetry'] ) ? '1' : '0' );
 
-    // Templates Settings Keys
+    // Templates Settings Keys.
     $templates_keys = [
         'version',
         'last_updated',
@@ -162,18 +162,18 @@ function projects_wp_save_settings() {
         update_option( "projects_wp_templates_$key", isset( $_POST["projects_wp_templates_$key"] ) ? '1' : '0' );
     }
 
-    // Archives Settings Keys
+    // Archives Settings Keys.
     $archives_keys = [
         'archive_title',
         'project_title',
         'project_excerpt',
         'project_buttons',
     ];
-    foreach ($archives_keys as $key) {
-        update_option( "projects_wp_archives_$key", isset($_POST["projects_wp_archives_$key"]) ? '1' : '0' );
+    foreach ( $archives_keys as $key ) {
+        update_option( "projects_wp_archives_$key", isset( $_POST["projects_wp_archives_$key"] ) ? '1' : '0' );
     }
 
-    add_settings_error( 'projects_wp_messages', 'projects_wp_settings_saved', __( 'Settings saved successfully.', 'projects-wp' ), 'updated' );
+    add_settings_error( 'projects_wp_messages', 'projects_wp_settings_saved', esc_html__( 'Settings saved successfully.', 'projects-wp' ), 'updated' );
 
     set_transient( 'projects_wp_settings_saved', true, 30 );
 }

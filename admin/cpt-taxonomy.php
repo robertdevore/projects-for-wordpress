@@ -14,9 +14,9 @@ if ( ! defined( 'WPINC' ) ) {
 function projects_wp_register_cpt_and_taxonomy() {
     register_post_type( 'projects', [
         'labels'        => [
-            'name'          => __( 'Projects', 'projects-wp' ),
-            'singular_name' => __( 'Project', 'projects-wp' ),
-            'add_new_item'  => __( 'Add New Project', 'projects-wp' ),
+            'name'          => esc_html__( 'Projects', 'projects-wp' ),
+            'singular_name' => esc_html__( 'Project', 'projects-wp' ),
+            'add_new_item'  => esc_html__( 'Add New Project', 'projects-wp' ),
         ],
         'public'        => true,
         'has_archive'   => true,
@@ -28,8 +28,8 @@ function projects_wp_register_cpt_and_taxonomy() {
 
     register_taxonomy( 'project-type', 'projects', [
         'labels'            => [
-            'name'          => __( 'Project Types', 'projects-wp' ),
-            'singular_name' => __( 'Project Type', 'projects-wp' ),
+            'name'          => esc_html__( 'Project Types', 'projects-wp' ),
+            'singular_name' => esc_html__( 'Project Type', 'projects-wp' ),
         ],
         'hierarchical'      => true,
         'show_in_rest'      => true,
@@ -41,13 +41,13 @@ function projects_wp_register_cpt_and_taxonomy() {
     ] );
 
     if ( ! term_exists( 'plugin', 'project_type' ) ) {
-        wp_insert_term( __( 'Plugin', 'projects-wp' ), 'project_type' );
+        wp_insert_term( esc_html__( 'Plugin', 'projects-wp' ), 'project_type' );
     }
     if ( ! term_exists( 'theme', 'project_type' ) ) {
-        wp_insert_term( __( 'Theme', 'projects-wp' ), 'project_type' );
+        wp_insert_term( esc_html__( 'Theme', 'projects-wp' ), 'project_type' );
     }
     if ( ! term_exists( 'pattern', 'project_type' ) ) {
-        wp_insert_term( __( 'Pattern', 'projects-wp' ), 'project_type' );
+        wp_insert_term( esc_html__( 'Pattern', 'projects-wp' ), 'project_type' );
     }
 }
 add_action( 'init', 'projects_wp_register_cpt_and_taxonomy' );

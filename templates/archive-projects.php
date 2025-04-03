@@ -1,5 +1,5 @@
 <?php
-// Check if the theme is an FSE (block theme)
+// Check if the theme is an FSE (block theme).
 $is_fse_theme = wp_theme_has_theme_json() && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme();
 
 if ( $is_fse_theme ) {
@@ -48,13 +48,13 @@ $settings = projects_wp_settings();
         <!-- Numbered Pagination -->
         <div class="pagination">
             <?php
-            echo paginate_links( array(
-                'total'        => $wp_query->max_num_pages,
-                'current'      => max( 1, get_query_var( 'paged' ) ),
-                'prev_text'    => __( '&laquo; Previous', 'projects-wp' ),
-                'next_text'    => __( 'Next &raquo;', 'projects-wp' ),
-                'type'         => 'list', // Outputs a <ul> list for better styling
-            ) );
+            echo paginate_links( [
+                'total'     => $wp_query->max_num_pages,
+                'current'   => max( 1, get_query_var( 'paged' ) ),
+                'prev_text' => esc_html__( '&laquo; Previous', 'projects-wp' ),
+                'next_text' => esc_html__( 'Next &raquo;', 'projects-wp' ),
+                'type'      => 'list',
+            ] );
             ?>
         </div>
 

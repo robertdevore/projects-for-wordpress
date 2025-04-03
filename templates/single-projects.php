@@ -36,15 +36,15 @@ if ( $github_url ) {
 
     // Check if the response is cached.
     $transient_key = 'github_api_response_' . md5( $api_url );
-    $response = get_transient( $transient_key );
+    $response      = get_transient( $transient_key );
 
     if ( false === $response ) {
         // Prepare the request arguments.
-        $args = array();
+        $args = [];
         if ( ! empty( $github_token ) ) {
-            $args['headers'] = array(
-                'Authorization' => 'token ' . $github_token, // Include the token in the headers.
-            );
+            $args['headers'] = [
+                'Authorization' => 'token ' . $github_token,
+            ];
         }
 
         // Make the API request.
@@ -78,7 +78,7 @@ if ( $github_url ) {
     }
 }
 
-// Format last updated date
+// Format last updated date.
 if ( $last_updated ) {
     $last_updated = date_i18n( get_option( 'date_format' ), strtotime( $last_updated ) );
 }
@@ -135,31 +135,31 @@ if ( $last_updated ) {
                         <?php if ( $settings['templates']['version'] ) : ?>
                         <tr>
                             <th><?php esc_html_e( 'Version:', 'projects-wp' ); ?></th>
-                            <td><?php echo esc_html( $version ); ?></td>
+                            <td><?php esc_html_e( $version ); ?></td>
                         </tr>
                         <?php endif; ?>
                         <?php if ( $settings['templates']['last_updated'] && $last_updated ) : ?>
                             <tr>
                                 <th><?php esc_html_e( 'Updated:', 'projects-wp' ); ?></th>
-                                <td><?php echo esc_html( $last_updated ); ?></td>
+                                <td><?php esc_html_e( $last_updated ); ?></td>
                             </tr>
                         <?php endif; ?>
                         <?php if ( $settings['templates']['license'] && $license ) : ?>
                             <tr>
                                 <th><?php esc_html_e( 'License:', 'projects-wp' ); ?></th>
-                                <td><?php echo esc_html( $license ); ?></td>
+                                <td><?php esc_html_e( $license ); ?></td>
                             </tr>
                         <?php endif; ?>
                         <?php if ( $settings['templates']['language'] && $language ) : ?>
                             <tr>
                                 <th><?php esc_html_e( 'Language:', 'projects-wp' ); ?></th>
-                                <td><?php echo esc_html( $language ); ?></td>
+                                <td><?php esc_html_e( $language ); ?></td>
                             </tr>
                         <?php endif; ?>
                         <?php if ( $settings['templates']['downloads'] ) : ?>
                         <tr>
                             <th><?php esc_html_e( 'Downloads:', 'projects-wp' ); ?></th>
-                            <td><?php echo esc_html( $download_count ); ?></td>
+                            <td><?php esc_html_e( $download_count ); ?></td>
                         </tr>
                         <?php endif; ?>
                         <?php
@@ -167,19 +167,19 @@ if ( $last_updated ) {
                             if ( isset( $github_data['stargazers_count'] ) && $settings['templates']['stargazers_count'] ) : ?>
                                 <tr>
                                     <th><?php esc_html_e( 'Stars:', 'projects-wp' ); ?></th>
-                                    <td><?php echo esc_html( $github_data['stargazers_count'] ); ?></td>
+                                    <td><?php esc_html_e( $github_data['stargazers_count'] ); ?></td>
                                 </tr>
                             <?php endif;
                             if ( isset( $github_data['forks_count'] ) && $settings['templates']['forks'] ) : ?>
                                 <tr>
                                     <th><?php esc_html_e( 'Forks:', 'projects-wp' ); ?></th>
-                                    <td><?php echo esc_html( $github_data['forks_count'] ); ?></td>
+                                    <td><?php esc_html_e( $github_data['forks_count'] ); ?></td>
                                 </tr>
                             <?php endif;
                             if ( isset( $github_data['open_issues_count'] ) && $settings['templates']['open_issues_count'] ) : ?>
                                 <tr>
                                     <th><?php esc_html_e( 'Issues:', 'projects-wp' ); ?></th>
-                                    <td><?php echo esc_html( $github_data['open_issues_count'] ); ?></td>
+                                    <td><?php esc_html_e( $github_data['open_issues_count'] ); ?></td>
                                 </tr>
                             <?php endif;
                         endif;
@@ -192,11 +192,11 @@ if ( $last_updated ) {
                 <a href="<?php esc_html_e( $github_url ); ?>">
                 <div class="project-owner">
                     <span>
-                        <img src="<?php echo esc_url( $owner_avatar ); ?>" alt="<?php echo esc_attr( $owner_name ); ?>" class="owner-avatar" style="width: 50px; height: 50px; border-radius: 50%;" />
+                        <img src="<?php echo esc_url( $owner_avatar ); ?>" alt="<?php esc_attr_e( $owner_name ); ?>" class="owner-avatar" style="width: 50px; height: 50px; border-radius: 50%;" />
                     </span>
                     <span>
                         <strong>
-                            <a href="<?php echo esc_url( $owner_url ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $owner_name ); ?></a>
+                            <a href="<?php echo esc_url( $owner_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( $owner_name ); ?></a>
                         </strong>
                     </span>
                     <span>
@@ -223,6 +223,12 @@ if ( $is_fse_theme ) {
 
 <?php
 
+/**
+ * Enqueues theme styles specifically for single and archive pages of the "projects" post type.
+ * 
+ * @since  1.0.0
+ * @return void
+ */
 function projects_wp_enqueue_theme_styles() {
     if ( is_singular( 'projects' ) || is_post_type_archive( 'projects' ) ) {
         // Enqueue the theme's main stylesheet.
