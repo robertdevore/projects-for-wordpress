@@ -81,16 +81,6 @@ function projects_wp_render_settings_page() {
                         <input type="password" id="projects_wp_github_api_token" name="projects_wp_github_api_token" value="<?php echo esc_attr( $api_token ); ?>" class="regular-text" />
                     </td>
                 </tr>
-                <tr>
-                    <th scope="row"><?php esc_html_e( 'Share Telemetry Data', 'projects-wp' ); ?></th>
-                    <td>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="projects_wp_share_telemetry" name="projects_wp_share_telemetry" value="1" <?php checked( $share_telemetry, '1' ); ?> />
-                            <span class="slider"></span>
-                        </label>
-                        <p class="description"><?php esc_html_e( 'Allow sharing telemetry data about your projects to help improve the plugin.', 'projects-wp' ); ?></p>
-                    </td>
-                </tr>
             </table>
 
             <h2><?php esc_html_e( 'Templates Settings', 'projects-wp' ); ?></h2>

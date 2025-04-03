@@ -337,43 +337,45 @@ function projects_wp_social_sharing_buttons( $project_id ) {
     $url   = urlencode( get_permalink( $project_id ) );
     $title = urlencode( get_the_title( $project_id ) );
 
-    echo '<div class="project-social-sharing">';
+    $html = '<div class="project-social-sharing">';
 
     // Facebook.
-    echo '<a href="https://www.facebook.com/sharer/sharer.php?u=' . $url . '" target="_blank" rel="noopener noreferrer">';
-    echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-facebook" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="0" y="0" width="24" height="24" fill="none"/><path d="M7 10v-3a1 1 0 0 1 1 -1h3v-4h4v4h3a1 1 0 0 1 1 1v3h-4v10h-4v-10h-3" /></svg>';
-    echo '</a>';
+    $html .= '<a href="https://www.facebook.com/sharer/sharer.php?u=' . $url . '" target="_blank" rel="noopener noreferrer">';
+    $html .= '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-facebook" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="0" y="0" width="24" height="24" fill="none"/><path d="M7 10v-3a1 1 0 0 1 1 -1h3v-4h4v4h3a1 1 0 0 1 1 1v3h-4v10h-4v-10h-3" /></svg>';
+    $html .= '</a>';
 
     // X (Twitter).
-    echo '<a href="https://twitter.com/intent/tweet?text=' . $title . '&url=' . $url . '" target="_blank" rel="noopener noreferrer">';
-    echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4l10 16m0 -16l-10 16" /></svg>';
-    echo '</a>';
+    $html .= '<a href="https://twitter.com/intent/tweet?text=' . $title . '&url=' . $url . '" target="_blank" rel="noopener noreferrer">';
+    $html .= '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 4l10 16m0 -16l-10 16" /></svg>';
+    $html .= '</a>';
 
     // LinkedIn.
-    echo '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' . $url . '" target="_blank" rel="noopener noreferrer">';
-    echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="4" y="4" width="16" height="16" rx="2" /><line x1="8" y1="11" x2="8" y2="16" /><line x1="8" y1="8" x2="8" y2="8.01" /><line x1="12" y1="16" x2="12" y2="11" /><path d="M16 16v-3a2 2 0 0 0 -4 0" /></svg>';
-    echo '</a>';
+    $html .= '<a href="https://www.linkedin.com/sharing/share-offsite/?url=' . $url . '" target="_blank" rel="noopener noreferrer">';
+    $html .= '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="4" y="4" width="16" height="16" rx="2" /><line x1="8" y1="11" x2="8" y2="16" /><line x1="8" y1="8" x2="8" y2="8.01" /><line x1="12" y1="16" x2="12" y2="11" /><path d="M16 16v-3a2 2 0 0 0 -4 0" /></svg>';
+    $html .= '</a>';
 
     // Reddit.
-    echo '<a href="https://www.reddit.com/submit?url=' . $url . '&title=' . $title . '" target="_blank" rel="noopener noreferrer">';
-    echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-reddit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M12 12m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0" /><path d="M12 12h0" /><path d="M8.5 13c.667 .667 1.333 1 2 1s1.333 -.333 2 -1" /></svg>';
-    echo '</a>';
+    $html .= '<a href="https://www.reddit.com/submit?url=' . $url . '&title=' . $title . '" target="_blank" rel="noopener noreferrer">';
+    $html .= '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-reddit" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M12 12m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0" /><path d="M12 12h0" /><path d="M8.5 13c.667 .667 1.333 1 2 1s1.333 -.333 2 -1" /></svg>';
+    $html .= '</a>';
 
     // WhatsApp.
-    echo '<a href="https://wa.me/?text=' . $title . '%20' . $url . '" target="_blank" rel="noopener noreferrer">';
-    echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-whatsapp" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21l1.65 -4.75a9 9 0 1 1 3.85 3.85z" /><path d="M9 10c1 2 3 3 5 4" /><path d="M9 13c1 1 2 2 4 3" /></svg>';
-    echo '</a>';
+    $html .= '<a href="https://wa.me/?text=' . $title . '%20' . $url . '" target="_blank" rel="noopener noreferrer">';
+    $html .= '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-whatsapp" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 21l1.65 -4.75a9 9 0 1 1 3.85 3.85z" /><path d="M9 10c1 2 3 3 5 4" /><path d="M9 13c1 1 2 2 4 3" /></svg>';
+    $html .= '</a>';
 
     // Pinterest.
-    echo '<a href="https://pinterest.com/pin/create/button/?url=' . $url . '&description=' . $title . '" target="_blank" rel="noopener noreferrer">';
-    echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-pinterest" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M8 17c1 -2 1.5 -4 .5 -6s-.5 -4 .5 -6" /><path d="M15 11c.667 -1 1.667 -2.333 3 -4" /></svg>';
-    echo '</a>';
+    $html .= '<a href="https://pinterest.com/pin/create/button/?url=' . $url . '&description=' . $title . '" target="_blank" rel="noopener noreferrer">';
+    $html .= '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-pinterest" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M8 17c1 -2 1.5 -4 .5 -6s-.5 -4 .5 -6" /><path d="M15 11c.667 -1 1.667 -2.333 3 -4" /></svg>';
+    $html .= '</a>';
 
     // Email.
-    echo '<a href="mailto:?subject=' . $title . '&body=' . $url . '" target="_blank" rel="noopener noreferrer">';
-    echo '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7l9 6l9 -6" /><rect x="3" y="5" width="18" height="14" rx="2" /></svg>';
-    echo '</a>';
+    $html .= '<a href="mailto:?subject=' . $title . '&body=' . $url . '" target="_blank" rel="noopener noreferrer">';
+    $html .= '<svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="#0073aa" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7l9 6l9 -6" /><rect x="3" y="5" width="18" height="14" rx="2" /></svg>';
+    $html .= '</a>';
 
-    echo '</div>';
+    $html .= '</div>';
+
+    echo $html;
 }
 add_action( 'projects_after_download_button', 'projects_wp_social_sharing_buttons', 999 );
