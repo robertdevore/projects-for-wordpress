@@ -47,7 +47,6 @@ require 'admin/admin-settings.php';
 require 'admin/cpt-taxonomy.php';
 require 'admin/metabox.php';
 require 'includes/helper-functions.php';
-//require 'admin/telemetry-data.php';
 
 /**
  * Flush rewrite rules on activation.
