@@ -1,0 +1,300 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Projects for WordPress®\n"
+"POT-Creation-Date: 2025-04-04 10:12-0400\n"
+"PO-Revision-Date: 2025-04-04 10:12-0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"X-Generator: Poedit 3.6\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: projects-for-wordpress.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+"X-Poedit-SearchPathExcluded-1: includes/plugin-update-checker/vendor\n"
+
+#: admin/admin-settings.php:17 admin/admin-settings.php:18
+msgid "Settings"
+msgstr ""
+
+#: admin/admin-settings.php:49
+msgid "Version"
+msgstr ""
+
+#: admin/admin-settings.php:50
+msgid "Last Updated"
+msgstr ""
+
+#: admin/admin-settings.php:51
+msgid "License"
+msgstr ""
+
+#: admin/admin-settings.php:52
+msgid "Language"
+msgstr ""
+
+#: admin/admin-settings.php:53
+msgid "Downloads"
+msgstr ""
+
+#: admin/admin-settings.php:54
+msgid "Forks"
+msgstr ""
+
+#: admin/admin-settings.php:55
+msgid "Stars"
+msgstr ""
+
+#: admin/admin-settings.php:56
+msgid "Issues"
+msgstr ""
+
+#: admin/admin-settings.php:57
+msgid "GitHub Owner"
+msgstr ""
+
+#: admin/admin-settings.php:62
+msgid "Archive Title"
+msgstr ""
+
+#: admin/admin-settings.php:63
+msgid "Project Title"
+msgstr ""
+
+#: admin/admin-settings.php:64
+msgid "Project Excerpt"
+msgstr ""
+
+#: admin/admin-settings.php:65
+msgid "Project Buttons"
+msgstr ""
+
+#: admin/admin-settings.php:70
+msgid "Projects for WordPress Settings"
+msgstr ""
+
+#: admin/admin-settings.php:74
+msgid "General Settings"
+msgstr ""
+
+#: admin/admin-settings.php:78
+msgid "GitHub API Token"
+msgstr ""
+
+#: admin/admin-settings.php:86
+msgid "Templates Settings"
+msgstr ""
+
+#: admin/admin-settings.php:102
+msgid "Archives Settings"
+msgstr ""
+
+#: admin/admin-settings.php:119
+msgid "Save Settings"
+msgstr ""
+
+#: admin/admin-settings.php:166
+msgid "Settings saved successfully."
+msgstr ""
+
+#: admin/cpt-taxonomy.php:17 templates/archive-projects.php:17
+msgid "Projects"
+msgstr ""
+
+#: admin/cpt-taxonomy.php:18
+msgid "Project"
+msgstr ""
+
+#: admin/cpt-taxonomy.php:19
+msgid "Add New Project"
+msgstr ""
+
+#: admin/cpt-taxonomy.php:31
+msgid "Project Types"
+msgstr ""
+
+#: admin/cpt-taxonomy.php:32
+msgid "Project Type"
+msgstr ""
+
+#: admin/cpt-taxonomy.php:44
+msgid "Plugin"
+msgstr ""
+
+#: admin/cpt-taxonomy.php:47
+msgid "Theme"
+msgstr ""
+
+#: admin/cpt-taxonomy.php:50
+msgid "Pattern"
+msgstr ""
+
+#: admin/metabox.php:17
+msgid "GitHub URL"
+msgstr ""
+
+#: admin/metabox.php:39
+msgid "GitHub Repository URL:"
+msgstr ""
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:56
+msgid "View details"
+msgstr ""
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:79
+#, php-format
+msgid "More information about %s"
+msgstr ""
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:130
+msgid "Check for updates"
+msgstr ""
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:217
+#, php-format
+msgctxt "the plugin title"
+msgid "The %s plugin is up to date."
+msgstr ""
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:219
+#, php-format
+msgctxt "the plugin title"
+msgid "A new version of the %s plugin is available."
+msgstr ""
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:221
+#, php-format
+msgctxt "the plugin title"
+msgid "Could not determine if updates are available for %s."
+msgstr ""
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:227
+#, php-format
+msgid "Unknown update checker status \"%s\""
+msgstr ""
+
+#: includes/plugin-update-checker/Puc/v5p4/Vcs/PluginUpdateChecker.php:113
+msgid "There is no changelog available."
+msgstr ""
+
+#: projects-for-wordpress.php:117
+msgid "Invalid download URL. Please check the GitHub repository."
+msgstr ""
+
+#: projects-for-wordpress.php:118
+msgid "Download Error"
+msgstr ""
+
+#: projects-for-wordpress.php:133
+msgid "Download Count"
+msgstr ""
+
+#: projects-for-wordpress.php:147
+msgid "0"
+msgstr ""
+
+#: templates/archive-projects.php:37 templates/taxonomy-project-type.php:37
+msgid "Download"
+msgstr ""
+
+#: templates/archive-projects.php:40 templates/taxonomy-project-type.php:40
+msgid "View Project"
+msgstr ""
+
+#: templates/archive-projects.php:54 templates/taxonomy-project-type.php:54
+msgid "&laquo; Previous"
+msgstr ""
+
+#: templates/archive-projects.php:55 templates/taxonomy-project-type.php:55
+msgid "Next &raquo;"
+msgstr ""
+
+#: templates/archive-projects.php:62 templates/taxonomy-project-type.php:62
+msgid "No projects found."
+msgstr ""
+
+#: templates/single-projects.php:95
+msgid "Project Banner"
+msgstr ""
+
+#: templates/single-projects.php:118
+msgid "Download Now"
+msgstr ""
+
+#: templates/single-projects.php:122
+msgid "View on GitHub"
+msgstr ""
+
+#: templates/single-projects.php:125
+msgid "GitHub Repository:"
+msgstr ""
+
+#: templates/single-projects.php:125
+msgid "No repository linked."
+msgstr ""
+
+#: templates/single-projects.php:137
+msgid "Version:"
+msgstr ""
+
+#: templates/single-projects.php:143
+msgid "Updated:"
+msgstr ""
+
+#: templates/single-projects.php:149
+msgid "License:"
+msgstr ""
+
+#: templates/single-projects.php:155
+msgid "Language:"
+msgstr ""
+
+#: templates/single-projects.php:161
+msgid "Downloads:"
+msgstr ""
+
+#: templates/single-projects.php:169
+msgid "Stars:"
+msgstr ""
+
+#: templates/single-projects.php:175
+msgid "Forks:"
+msgstr ""
+
+#: templates/single-projects.php:181
+msgid "Issues:"
+msgstr ""
+
+#: templates/single-projects.php:203
+msgid "Follow"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Projects for WordPress®"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/robertdevore/projects-for-wordpress/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Create a showcase directory for projects (plugins, themes, patterns) with "
+"custom post types, taxonomies, and download functionality."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Robert DeVore"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://www.robertdevore.com"
+msgstr ""

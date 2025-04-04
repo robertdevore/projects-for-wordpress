@@ -2,7 +2,7 @@
 
 Create a beautifully structured, developer-first showcase directory for your WordPress® plugins, themes, and patterns - powered by GitHub.
 
-## 🔧 What It Does
+## What It Does
 
 **Projects for WordPress®** adds a custom post type (`projects`) and taxonomy (`project-type`) to your WordPress® admin, allowing you to:
 

@@ -1,0 +1,303 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Projects for WordPress®\n"
+"POT-Creation-Date: 2025-04-04 10:13-0400\n"
+"PO-Revision-Date: 2025-04-04 10:14-0400\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.6\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: projects-for-wordpress.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+"X-Poedit-SearchPathExcluded-1: includes/plugin-update-checker/vendor\n"
+
+#: admin/admin-settings.php:17 admin/admin-settings.php:18
+msgid "Settings"
+msgstr "Paramètres"
+
+#: admin/admin-settings.php:49
+msgid "Version"
+msgstr "Version"
+
+#: admin/admin-settings.php:50
+msgid "Last Updated"
+msgstr "Dernière mise à jour"
+
+#: admin/admin-settings.php:51
+msgid "License"
+msgstr "Licence"
+
+#: admin/admin-settings.php:52
+msgid "Language"
+msgstr "Langue"
+
+#: admin/admin-settings.php:53
+msgid "Downloads"
+msgstr "Téléchargements"
+
+#: admin/admin-settings.php:54
+msgid "Forks"
+msgstr "Fourchettes"
+
+#: admin/admin-settings.php:55
+msgid "Stars"
+msgstr "Étoiles"
+
+#: admin/admin-settings.php:56
+msgid "Issues"
+msgstr "Problèmes"
+
+#: admin/admin-settings.php:57
+msgid "GitHub Owner"
+msgstr "Propriétaire de GitHub"
+
+#: admin/admin-settings.php:62
+msgid "Archive Title"
+msgstr "Archive Titre"
+
+#: admin/admin-settings.php:63
+msgid "Project Title"
+msgstr "Titre du projet"
+
+#: admin/admin-settings.php:64
+msgid "Project Excerpt"
+msgstr "Extrait du projet"
+
+#: admin/admin-settings.php:65
+msgid "Project Buttons"
+msgstr "Boutons de projet"
+
+#: admin/admin-settings.php:70
+msgid "Projects for WordPress Settings"
+msgstr "Projets pour les réglages de WordPress"
+
+#: admin/admin-settings.php:74
+msgid "General Settings"
+msgstr "Réglages généraux"
+
+#: admin/admin-settings.php:78
+msgid "GitHub API Token"
+msgstr "Token API GitHub"
+
+#: admin/admin-settings.php:86
+msgid "Templates Settings"
+msgstr "¨Paramètres des modèles"
+
+#: admin/admin-settings.php:102
+msgid "Archives Settings"
+msgstr "Paramètres des archives"
+
+#: admin/admin-settings.php:119
+msgid "Save Settings"
+msgstr "Enregistrer les paramètres"
+
+#: admin/admin-settings.php:166
+msgid "Settings saved successfully."
+msgstr "Réglages bien enregistrés."
+
+#: admin/cpt-taxonomy.php:17 templates/archive-projects.php:17
+msgid "Projects"
+msgstr "Projets"
+
+#: admin/cpt-taxonomy.php:18
+msgid "Project"
+msgstr "Projet"
+
+#: admin/cpt-taxonomy.php:19
+msgid "Add New Project"
+msgstr "Ajouter un nouveau projet"
+
+#: admin/cpt-taxonomy.php:31
+msgid "Project Types"
+msgstr "Types de projets"
+
+#: admin/cpt-taxonomy.php:32
+msgid "Project Type"
+msgstr "Type de projet"
+
+#: admin/cpt-taxonomy.php:44
+msgid "Plugin"
+msgstr "Extension"
+
+#: admin/cpt-taxonomy.php:47
+msgid "Theme"
+msgstr "Thème"
+
+#: admin/cpt-taxonomy.php:50
+msgid "Pattern"
+msgstr "Motif"
+
+#: admin/metabox.php:17
+msgid "GitHub URL"
+msgstr "URL GitHub"
+
+#: admin/metabox.php:39
+msgid "GitHub Repository URL:"
+msgstr "URL du dépôt GitHub :"
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:56
+msgid "View details"
+msgstr "Voir les détails"
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:79
+#, php-format
+msgid "More information about %s"
+msgstr "Plus d’informations sur %s"
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:130
+msgid "Check for updates"
+msgstr "Vérifier les mises à jour"
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:217
+#, php-format
+msgctxt "the plugin title"
+msgid "The %s plugin is up to date."
+msgstr "Le plugin %s est à jour."
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:219
+#, php-format
+msgctxt "the plugin title"
+msgid "A new version of the %s plugin is available."
+msgstr "Une nouvelle version de l'extension %s est disponible."
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:221
+#, php-format
+msgctxt "the plugin title"
+msgid "Could not determine if updates are available for %s."
+msgstr ""
+"Impossible de déterminer si des mises à jour sont disponibles pour %s."
+
+#: includes/plugin-update-checker/Puc/v5p4/Plugin/Ui.php:227
+#, php-format
+msgid "Unknown update checker status \"%s\""
+msgstr "Mise à jour inconnue statut \"%s\""
+
+#: includes/plugin-update-checker/Puc/v5p4/Vcs/PluginUpdateChecker.php:113
+msgid "There is no changelog available."
+msgstr "Aucun registre de modifications disponible."
+
+#: projects-for-wordpress.php:117
+msgid "Invalid download URL. Please check the GitHub repository."
+msgstr "URL de téléchargement invalide. Veuillez vérifier le dépôt GitHub."
+
+#: projects-for-wordpress.php:118
+msgid "Download Error"
+msgstr "Télécharger Erreur"
+
+#: projects-for-wordpress.php:133
+msgid "Download Count"
+msgstr "Nombre de Téléchargements"
+
+#: projects-for-wordpress.php:147
+msgid "0"
+msgstr "0"
+
+#: templates/archive-projects.php:37 templates/taxonomy-project-type.php:37
+msgid "Download"
+msgstr "Télécharger"
+
+#: templates/archive-projects.php:40 templates/taxonomy-project-type.php:40
+msgid "View Project"
+msgstr "Voir le projet"
+
+#: templates/archive-projects.php:54 templates/taxonomy-project-type.php:54
+msgid "&laquo; Previous"
+msgstr "&laquo; Précédent"
+
+#: templates/archive-projects.php:55 templates/taxonomy-project-type.php:55
+msgid "Next &raquo;"
+msgstr "Suivant &raquo;"
+
+#: templates/archive-projects.php:62 templates/taxonomy-project-type.php:62
+msgid "No projects found."
+msgstr "Aucun projet trouvé."
+
+#: templates/single-projects.php:95
+msgid "Project Banner"
+msgstr "Bannière du projet"
+
+#: templates/single-projects.php:118
+msgid "Download Now"
+msgstr "Télécharger maintenant"
+
+#: templates/single-projects.php:122
+msgid "View on GitHub"
+msgstr "Voir sur GitHub"
+
+#: templates/single-projects.php:125
+msgid "GitHub Repository:"
+msgstr "Dépôt GitHub:"
+
+#: templates/single-projects.php:125
+msgid "No repository linked."
+msgstr "Aucun dépôt n'est lié."
+
+#: templates/single-projects.php:137
+msgid "Version:"
+msgstr "Version:"
+
+#: templates/single-projects.php:143
+msgid "Updated:"
+msgstr "Mis à jour :"
+
+#: templates/single-projects.php:149
+msgid "License:"
+msgstr "Licence:"
+
+#: templates/single-projects.php:155
+msgid "Language:"
+msgstr "Langue:"
+
+#: templates/single-projects.php:161
+msgid "Downloads:"
+msgstr "Téléchargements:"
+
+#: templates/single-projects.php:169
+msgid "Stars:"
+msgstr "Étoiles:"
+
+#: templates/single-projects.php:175
+msgid "Forks:"
+msgstr "Forks:"
+
+#: templates/single-projects.php:181
+msgid "Issues:"
+msgstr "Problèmes:"
+
+#: templates/single-projects.php:203
+msgid "Follow"
+msgstr "Suivre"
+
+#. Plugin Name of the plugin/theme
+msgid "Projects for WordPress®"
+msgstr "Projets pour WordPress®"
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/robertdevore/projects-for-wordpress/"
+msgstr "https://github.com/robertdevore/projects-for-wordpress/"
+
+#. Description of the plugin/theme
+msgid ""
+"Create a showcase directory for projects (plugins, themes, patterns) with "
+"custom post types, taxonomies, and download functionality."
+msgstr ""
+"Créer un répertoire de présentation pour les projets (plugins, thèmes, "
+"modèles) avec des types d'articles personnalisés, des taxonomies et des "
+"fonctionnalités de téléchargement."
+
+#. Author of the plugin/theme
+msgid "Robert DeVore"
+msgstr "Robert DeVore"
+
+#. Author URI of the plugin/theme
+msgid "https://www.robertdevore.com"
+msgstr "https://www.robertdevore.com"
